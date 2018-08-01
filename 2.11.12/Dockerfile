@@ -30,7 +30,6 @@ RUN \
   sbt sbtVersion
 
 # Install gcloud SDK
-
 ENV PATH /google-cloud-sdk/bin:$PATH
 RUN apk --no-cache add \
         curl \
