@@ -6,5 +6,5 @@ This repository contains **Dockerfile** of [Scala](http://www.scala-lang.org), [
 ### scala-2.11.12
 Scala:  2.11.12   
 SBT:    1.2.0   
-MVN:    3.5.4
+MVN:    latest
 GC SDK: 206.0.0   

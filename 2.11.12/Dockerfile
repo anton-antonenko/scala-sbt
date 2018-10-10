@@ -1,5 +1,5 @@
 #
-# Scala 2.11.12 + sbt 1.2.0 + maven 3.5.4 + gcloud sdk 206.0.0 Dockerfile
+# Scala 2.11.12 + sbt 1.2.0 + latest maven + gcloud sdk 206.0.0 Dockerfile
 #
 
 # Pull base image
@@ -31,16 +31,8 @@ RUN \
   sbt sbtVersion
 
 # Install Maven
-ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
-ENV MAVEN_HOME /usr/share/maven
-ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
-
-RUN mkdir -p /usr/share/maven \
-  && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
-  && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
-  && rm -f /tmp/apache-maven.tar.gz \
-  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn \
-  && echo "export PATH=$PATH:$MAVEN_HOME/bin" >> /root/.bashrc \
+ENV PATH $PATH:/usr/share/maven/bin
+RUN apt-get install -qq maven \
   && mvn --version
 
 # Install gcloud SDK
