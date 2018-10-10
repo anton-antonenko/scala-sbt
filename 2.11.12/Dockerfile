@@ -32,17 +32,16 @@ RUN \
 
 # Install Maven
 ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
+ENV MAVEN_HOME /usr/share/maven
+ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
 RUN mkdir -p /usr/share/maven \
   && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
   && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
   && rm -f /tmp/apache-maven.tar.gz \
   && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn \
-  && echo "export PATH=/usr/share/maven/bin:$PATH" >> /root/.bashrc \
+  && echo "export PATH=$PATH:$MAVEN_HOME/bin" >> /root/.bashrc \
   && mvn --version
-
-ENV MAVEN_HOME /usr/share/maven
-ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
 # Install gcloud SDK
 ENV PATH /google-cloud-sdk/bin:$PATH
