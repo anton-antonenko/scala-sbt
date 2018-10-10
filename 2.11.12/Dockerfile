@@ -1,5 +1,5 @@
 #
-# Scala 2.11.12 + sbt 1.2.0 + gcloud sdk 206.0.0 Dockerfile
+# Scala 2.11.12 + sbt 1.2.0 + maven 3.5.4 + gcloud sdk 206.0.0 Dockerfile
 #
 
 # Pull base image
@@ -8,6 +8,7 @@ FROM openjdk:8u171
 # Env variables
 ENV SCALA_VERSION 2.11.12
 ENV SBT_VERSION 1.2.0
+ENV MAVEN_VERSION 3.5.4
 ENV CLOUD_SDK_VERSION 206.0.0
 
 # Scala expects this file
@@ -29,9 +30,23 @@ RUN \
   apt-get install sbt && \
   sbt sbtVersion
 
+# Install Maven
+ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
+
+RUN mkdir -p /usr/share/maven \
+  && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+  && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
+  && rm -f /tmp/apache-maven.tar.gz \
+  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn \
+  && echo "export PATH=/usr/share/maven/bin:$PATH" >> /root/.bashrc \
+  && mvn --version
+
+ENV MAVEN_HOME /usr/share/maven
+ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
+
 # Install gcloud SDK
 ENV PATH /google-cloud-sdk/bin:$PATH
-RUN apt-get install \
+RUN apt-get install -qq \
         python \
         bash \
         openssh-client \
